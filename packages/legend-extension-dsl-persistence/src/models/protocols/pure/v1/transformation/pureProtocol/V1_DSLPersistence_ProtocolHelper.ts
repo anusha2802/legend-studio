@@ -353,7 +353,7 @@ const V1_dateTimeTransactionMilestoningModelSchema = createModelSchema(
     dateTimeInName: primitive(),
     dateTimeOutName: primitive(),
     derivation: custom(
-      (val) => V1_serializeTransactionDerivation(val),
+      (val) => (val ? V1_serializeTransactionDerivation(val) : SKIP),
       (val) => V1_deserializeTransactionDerivation(val),
     ),
   },
@@ -368,9 +368,11 @@ const V1_batchIdAndDateTimeTransactionMilestoningModelSchema =
     batchIdOutName: primitive(),
     dateTimeInName: primitive(),
     dateTimeOutName: primitive(),
-    derivation: custom(
-      (val) => V1_serializeTransactionDerivation(val),
-      (val) => V1_deserializeTransactionDerivation(val),
+    derivation: optional(
+      custom(
+        (val) => (val ? V1_serializeTransactionDerivation(val) : SKIP),
+        (val) => V1_deserializeTransactionDerivation(val),
+      ),
     ),
   });
 
