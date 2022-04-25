@@ -111,17 +111,17 @@ import {
  * notifier
  **********/
 
-enum V1_NotifyeeType {
+export enum V1_NotifyeeType {
   EMAIL_NOTIFYEE = 'emailNotifyee',
   PAGER_DUTY_NOTIFYEE = 'pagerDutyNotifyee',
 }
 
-const V1_emailNotifyeeModelSchema = createModelSchema(V1_EmailNotifyee, {
+export const V1_emailNotifyeeModelSchema = createModelSchema(V1_EmailNotifyee, {
   _type: usingConstantValueSchema(V1_NotifyeeType.EMAIL_NOTIFYEE),
   address: primitive(),
 });
 
-const V1_pagerDutyNotifyeeModelSchema = createModelSchema(
+export const V1_pagerDutyNotifyeeModelSchema = createModelSchema(
   V1_PagerDutyNotifyee,
   {
     _type: usingConstantValueSchema(V1_NotifyeeType.PAGER_DUTY_NOTIFYEE),
@@ -129,7 +129,7 @@ const V1_pagerDutyNotifyeeModelSchema = createModelSchema(
   },
 );
 
-const V1_serializeNotifyee = (
+export const V1_serializeNotifyee = (
   protocol: V1_Notifyee,
 ): PlainObject<V1_Notifyee> => {
   if (protocol instanceof V1_EmailNotifyee) {
@@ -140,7 +140,7 @@ const V1_serializeNotifyee = (
   throw new UnsupportedOperationError(`Can't serialize notifyee`, protocol);
 };
 
-const V1_deserializeNotifyee = (
+export const V1_deserializeNotifyee = (
   json: PlainObject<V1_Notifyee>,
 ): V1_Notifyee => {
   switch (json._type) {
@@ -155,7 +155,7 @@ const V1_deserializeNotifyee = (
   }
 };
 
-const V1_notifierModelSchema = createModelSchema(V1_Notifier, {
+export const V1_notifierModelSchema = createModelSchema(V1_Notifier, {
   notifyees: custom(
     (val) => serializeArray(val, (v) => V1_serializeNotifyee(v), true),
     (val) => deserializeArray(val, (v) => V1_deserializeNotifyee(v), false),
@@ -166,21 +166,24 @@ const V1_notifierModelSchema = createModelSchema(V1_Notifier, {
  * auditing
  **********/
 
-enum V1_AuditingType {
+export enum V1_AuditingType {
   NO_AUDITING = 'noAuditing',
   DATE_TIME_AUDITING = 'batchDateTimeAuditing',
 }
 
-const V1_noAuditingModelSchema = createModelSchema(V1_NoAuditing, {
+export const V1_noAuditingModelSchema = createModelSchema(V1_NoAuditing, {
   _type: usingConstantValueSchema(V1_AuditingType.NO_AUDITING),
 });
 
-const V1_dateTimeAuditingModelSchema = createModelSchema(V1_DateTimeAuditing, {
-  _type: usingConstantValueSchema(V1_AuditingType.DATE_TIME_AUDITING),
-  dateTimeName: primitive(),
-});
+export const V1_dateTimeAuditingModelSchema = createModelSchema(
+  V1_DateTimeAuditing,
+  {
+    _type: usingConstantValueSchema(V1_AuditingType.DATE_TIME_AUDITING),
+    dateTimeName: primitive(),
+  },
+);
 
-const V1_serializeAuditing = (
+export const V1_serializeAuditing = (
   protocol: V1_Auditing,
 ): PlainObject<V1_Auditing> => {
   if (protocol instanceof V1_NoAuditing) {
@@ -191,7 +194,7 @@ const V1_serializeAuditing = (
   throw new UnsupportedOperationError(`Can't serialize auditing`, protocol);
 };
 
-const V1_deserializeAuditing = (
+export const V1_deserializeAuditing = (
   json: PlainObject<V1_Auditing>,
 ): V1_Auditing => {
   switch (json._type) {
@@ -210,12 +213,12 @@ const V1_deserializeAuditing = (
  * merge strategy
  **********/
 
-enum V1_MergeStrategyType {
+export enum V1_MergeStrategyType {
   NO_DELETES_MERGE_STRATEGY = 'noDeletesMergeStrategy',
   DELETE_INDICATOR_MERGE_STRATEGY = 'deleteIndicatorMergeStrategy',
 }
 
-const V1_noDeletesMergeStrategyModelSchema = createModelSchema(
+export const V1_noDeletesMergeStrategyModelSchema = createModelSchema(
   V1_NoDeletesMergeStrategy,
   {
     _type: usingConstantValueSchema(
@@ -224,7 +227,7 @@ const V1_noDeletesMergeStrategyModelSchema = createModelSchema(
   },
 );
 
-const V1_deleteIndicatorMergeStrategyModelSchema = createModelSchema(
+export const V1_deleteIndicatorMergeStrategyModelSchema = createModelSchema(
   V1_DeleteIndicatorMergeStrategy,
   {
     _type: usingConstantValueSchema(
@@ -235,7 +238,7 @@ const V1_deleteIndicatorMergeStrategyModelSchema = createModelSchema(
   },
 );
 
-const V1_serializeMergeStrategy = (
+export const V1_serializeMergeStrategy = (
   protocol: V1_MergeStrategy,
 ): PlainObject<V1_MergeStrategy> => {
   if (protocol instanceof V1_NoDeletesMergeStrategy) {
@@ -249,7 +252,7 @@ const V1_serializeMergeStrategy = (
   );
 };
 
-const V1_deserializeMergeStrategy = (
+export const V1_deserializeMergeStrategy = (
   json: PlainObject<V1_MergeStrategy>,
 ): V1_MergeStrategy => {
   switch (json._type) {
@@ -268,12 +271,12 @@ const V1_deserializeMergeStrategy = (
  * transaction derivation
  **********/
 
-enum V1_TransactionDerivationType {
+export enum V1_TransactionDerivationType {
   SOURCE_SPECIFIES_IN_DATE_TIME = 'sourceSpecifiesInDateTime',
   SOURCE_SPECIFIES_IN_AND_OUT_DATE_TIME = 'sourceSpecifiesInAndOutDateTime',
 }
 
-const V1_sourceSpecifiesInDateTimeModelSchema = createModelSchema(
+export const V1_sourceSpecifiesInDateTimeModelSchema = createModelSchema(
   V1_SourceSpecifiesInDateTime,
   {
     _type: usingConstantValueSchema(
@@ -283,7 +286,7 @@ const V1_sourceSpecifiesInDateTimeModelSchema = createModelSchema(
   },
 );
 
-const V1_sourceSpecifiesInAndOutDateTimeModelSchema = createModelSchema(
+export const V1_sourceSpecifiesInAndOutDateTimeModelSchema = createModelSchema(
   V1_SourceSpecifiesInAndOutDateTime,
   {
     _type: usingConstantValueSchema(
@@ -294,7 +297,7 @@ const V1_sourceSpecifiesInAndOutDateTimeModelSchema = createModelSchema(
   },
 );
 
-const V1_serializeTransactionDerivation = (
+export const V1_serializeTransactionDerivation = (
   protocol: V1_TransactionDerivation,
 ): PlainObject<V1_TransactionDerivation> => {
   if (protocol instanceof V1_SourceSpecifiesInDateTime) {
@@ -308,7 +311,7 @@ const V1_serializeTransactionDerivation = (
   );
 };
 
-const V1_deserializeTransactionDerivation = (
+export const V1_deserializeTransactionDerivation = (
   json: PlainObject<V1_TransactionDerivation>,
 ): V1_ValidityDerivation => {
   switch (json._type) {
@@ -327,13 +330,13 @@ const V1_deserializeTransactionDerivation = (
  * transaction milestoning
  **********/
 
-enum V1_TransactionMilestoningType {
+export enum V1_TransactionMilestoningType {
   BATCH_ID_TRANSACTION_MILESTONING = 'batchIdTransactionMilestoning',
   DATE_TIME_TRANSACTION_MILESTONING = 'dateTimeTransactionMilestoning',
   BATCH_ID_AND_DATE_TIME_TRANSACTION_MILESTONING = 'batchIdAndDateTimeTransactionMilestoning',
 }
 
-const V1_batchIdTransactionMilestoningModelSchema = createModelSchema(
+export const V1_batchIdTransactionMilestoningModelSchema = createModelSchema(
   V1_BatchIdTransactionMilestoning,
   {
     _type: usingConstantValueSchema(
@@ -344,7 +347,7 @@ const V1_batchIdTransactionMilestoningModelSchema = createModelSchema(
   },
 );
 
-const V1_dateTimeTransactionMilestoningModelSchema = createModelSchema(
+export const V1_dateTimeTransactionMilestoningModelSchema = createModelSchema(
   V1_DateTimeTransactionMilestoning,
   {
     _type: usingConstantValueSchema(
@@ -359,7 +362,7 @@ const V1_dateTimeTransactionMilestoningModelSchema = createModelSchema(
   },
 );
 
-const V1_batchIdAndDateTimeTransactionMilestoningModelSchema =
+export const V1_batchIdAndDateTimeTransactionMilestoningModelSchema =
   createModelSchema(V1_BatchIdAndDateTimeTransactionMilestoning, {
     _type: usingConstantValueSchema(
       V1_TransactionMilestoningType.BATCH_ID_AND_DATE_TIME_TRANSACTION_MILESTONING,
@@ -376,7 +379,7 @@ const V1_batchIdAndDateTimeTransactionMilestoningModelSchema =
     ),
   });
 
-const V1_serializeTransactionMilestoning = (
+export const V1_serializeTransactionMilestoning = (
   protocol: V1_TransactionMilestoning,
 ): PlainObject<V1_TransactionMilestoning> => {
   if (protocol instanceof V1_BatchIdTransactionMilestoning) {
@@ -395,7 +398,7 @@ const V1_serializeTransactionMilestoning = (
   );
 };
 
-const V1_deserializeTransactionMilestoning = (
+export const V1_deserializeTransactionMilestoning = (
   json: PlainObject<V1_TransactionMilestoning>,
 ): V1_TransactionMilestoning => {
   switch (json._type) {
@@ -419,12 +422,12 @@ const V1_deserializeTransactionMilestoning = (
  * validity derivation
  **********/
 
-enum V1_ValidityDerivationType {
+export enum V1_ValidityDerivationType {
   SOURCE_SPECIFIES_FROM_DATE_TIME = 'sourceSpecifiesFromDateTime',
   SOURCE_SPECIFIES_FROM_AND_THRU_DATE_TIME = 'sourceSpecifiesFromAndThruDateTime',
 }
 
-const V1_sourceSpecifiesFromDateTimeModelSchema = createModelSchema(
+export const V1_sourceSpecifiesFromDateTimeModelSchema = createModelSchema(
   V1_SourceSpecifiesFromDateTime,
   {
     _type: usingConstantValueSchema(
@@ -434,18 +437,16 @@ const V1_sourceSpecifiesFromDateTimeModelSchema = createModelSchema(
   },
 );
 
-const V1_sourceSpecifiesFromAndThruDateTimeModelSchema = createModelSchema(
-  V1_SourceSpecifiesFromAndThruDateTime,
-  {
+export const V1_sourceSpecifiesFromAndThruDateTimeModelSchema =
+  createModelSchema(V1_SourceSpecifiesFromAndThruDateTime, {
     _type: usingConstantValueSchema(
       V1_ValidityDerivationType.SOURCE_SPECIFIES_FROM_AND_THRU_DATE_TIME,
     ),
     sourceDateTimeFromField: primitive(),
     sourceDateTimeThruField: primitive(),
-  },
-);
+  });
 
-const V1_serializeValidityDerivation = (
+export const V1_serializeValidityDerivation = (
   protocol: V1_ValidityDerivation,
 ): PlainObject<V1_ValidityDerivation> => {
   if (protocol instanceof V1_SourceSpecifiesFromDateTime) {
@@ -462,7 +463,7 @@ const V1_serializeValidityDerivation = (
   );
 };
 
-const V1_deserializeValidityDerivation = (
+export const V1_deserializeValidityDerivation = (
   json: PlainObject<V1_ValidityDerivation>,
 ): V1_ValidityDerivation => {
   switch (json._type) {
@@ -484,11 +485,11 @@ const V1_deserializeValidityDerivation = (
  * validity milestoning
  **********/
 
-enum V1_ValidityMilestoningType {
+export enum V1_ValidityMilestoningType {
   DATE_TIME_VALIDITY_MILESTONING = 'dateTimeValidityMilestoning',
 }
 
-const V1_dateTimeValidityMilestoningModelSchema = createModelSchema(
+export const V1_dateTimeValidityMilestoningModelSchema = createModelSchema(
   V1_DateTimeValidityMilestoning,
   {
     _type: usingConstantValueSchema(
@@ -503,7 +504,7 @@ const V1_dateTimeValidityMilestoningModelSchema = createModelSchema(
   },
 );
 
-const V1_serializeValidityMilestoning = (
+export const V1_serializeValidityMilestoning = (
   protocol: V1_ValidityMilestoning,
 ): PlainObject<V1_ValidityMilestoning> => {
   if (protocol instanceof V1_DateTimeValidityMilestoning) {
@@ -515,7 +516,7 @@ const V1_serializeValidityMilestoning = (
   );
 };
 
-const V1_deserializeValidityMilestoning = (
+export const V1_deserializeValidityMilestoning = (
   json: PlainObject<V1_ValidityMilestoning>,
 ): V1_ValidityMilestoning => {
   switch (json._type) {
@@ -532,7 +533,7 @@ const V1_deserializeValidityMilestoning = (
  * ingest mode
  **********/
 
-enum V1_IngestModeType {
+export enum V1_IngestModeType {
   NONTEMPORAL_SNAPSHOT = 'nontemporalSnapshot',
   UNITEMPORAL_SNAPSHOT = 'unitemporalSnapshot',
   BITEMPORAL_SNAPSHOT = 'bitemporalSnapshot',
@@ -542,7 +543,7 @@ enum V1_IngestModeType {
   APPEND_ONLY = 'appendOnly',
 }
 
-const V1_nontemporalSnapshotModelSchema = createModelSchema(
+export const V1_nontemporalSnapshotModelSchema = createModelSchema(
   V1_NontemporalSnapshot,
   {
     _type: usingConstantValueSchema(V1_IngestModeType.NONTEMPORAL_SNAPSHOT),
@@ -553,7 +554,7 @@ const V1_nontemporalSnapshotModelSchema = createModelSchema(
   },
 );
 
-const V1_unitemporalSnapshotModelSchema = createModelSchema(
+export const V1_unitemporalSnapshotModelSchema = createModelSchema(
   V1_UnitemporalSnapshot,
   {
     _type: usingConstantValueSchema(V1_IngestModeType.UNITEMPORAL_SNAPSHOT),
@@ -564,7 +565,7 @@ const V1_unitemporalSnapshotModelSchema = createModelSchema(
   },
 );
 
-const V1_bitemporalSnapshotModelSchema = createModelSchema(
+export const V1_bitemporalSnapshotModelSchema = createModelSchema(
   V1_BitemporalSnapshot,
   {
     _type: usingConstantValueSchema(V1_IngestModeType.BITEMPORAL_SNAPSHOT),
@@ -579,47 +580,56 @@ const V1_bitemporalSnapshotModelSchema = createModelSchema(
   },
 );
 
-const V1_nontemporalDeltaModelSchema = createModelSchema(V1_NontemporalDelta, {
-  _type: usingConstantValueSchema(V1_IngestModeType.NONTEMPORAL_DELTA),
-  auditing: custom(
-    (val) => V1_serializeAuditing(val),
-    (val) => V1_deserializeAuditing(val),
-  ),
-  mergeStrategy: custom(
-    (val) => V1_serializeMergeStrategy(val),
-    (val) => V1_deserializeMergeStrategy(val),
-  ),
-});
+export const V1_nontemporalDeltaModelSchema = createModelSchema(
+  V1_NontemporalDelta,
+  {
+    _type: usingConstantValueSchema(V1_IngestModeType.NONTEMPORAL_DELTA),
+    auditing: custom(
+      (val) => V1_serializeAuditing(val),
+      (val) => V1_deserializeAuditing(val),
+    ),
+    mergeStrategy: custom(
+      (val) => V1_serializeMergeStrategy(val),
+      (val) => V1_deserializeMergeStrategy(val),
+    ),
+  },
+);
 
-const V1_unitemporalDeltaModelSchema = createModelSchema(V1_UnitemporalDelta, {
-  _type: usingConstantValueSchema(V1_IngestModeType.UNITEMPORAL_DELTA),
-  mergeStrategy: custom(
-    (val) => V1_serializeMergeStrategy(val),
-    (val) => V1_deserializeMergeStrategy(val),
-  ),
-  transactionMilestoning: custom(
-    (val) => V1_serializeTransactionMilestoning(val),
-    (val) => V1_deserializeTransactionMilestoning(val),
-  ),
-});
+export const V1_unitemporalDeltaModelSchema = createModelSchema(
+  V1_UnitemporalDelta,
+  {
+    _type: usingConstantValueSchema(V1_IngestModeType.UNITEMPORAL_DELTA),
+    mergeStrategy: custom(
+      (val) => V1_serializeMergeStrategy(val),
+      (val) => V1_deserializeMergeStrategy(val),
+    ),
+    transactionMilestoning: custom(
+      (val) => V1_serializeTransactionMilestoning(val),
+      (val) => V1_deserializeTransactionMilestoning(val),
+    ),
+  },
+);
 
-const V1_bitemporalDeltaModelSchema = createModelSchema(V1_BitemporalDelta, {
-  _type: usingConstantValueSchema(V1_IngestModeType.BITEMPORAL_DELTA),
-  mergeStrategy: custom(
-    (val) => V1_serializeMergeStrategy(val),
-    (val) => V1_deserializeMergeStrategy(val),
-  ),
-  transactionMilestoning: custom(
-    (val) => V1_serializeTransactionMilestoning(val),
-    (val) => V1_deserializeTransactionMilestoning(val),
-  ),
-  validityMilestoning: custom(
-    (val) => V1_serializeValidityMilestoning(val),
-    (val) => V1_deserializeValidityMilestoning(val),
-  ),
-});
+export const V1_bitemporalDeltaModelSchema = createModelSchema(
+  V1_BitemporalDelta,
+  {
+    _type: usingConstantValueSchema(V1_IngestModeType.BITEMPORAL_DELTA),
+    mergeStrategy: custom(
+      (val) => V1_serializeMergeStrategy(val),
+      (val) => V1_deserializeMergeStrategy(val),
+    ),
+    transactionMilestoning: custom(
+      (val) => V1_serializeTransactionMilestoning(val),
+      (val) => V1_deserializeTransactionMilestoning(val),
+    ),
+    validityMilestoning: custom(
+      (val) => V1_serializeValidityMilestoning(val),
+      (val) => V1_deserializeValidityMilestoning(val),
+    ),
+  },
+);
 
-const V1_appendOnlyModelSchema = createModelSchema(V1_AppendOnly, {
+export const V1_appendOnlyModelSchema = createModelSchema(V1_AppendOnly, {
   _type: usingConstantValueSchema(V1_IngestModeType.APPEND_ONLY),
   auditing: custom(
     (val) => V1_serializeAuditing(val),
@@ -628,7 +638,7 @@ const V1_appendOnlyModelSchema = createModelSchema(V1_AppendOnly, {
   filterDuplicates: primitive(),
 });
 
-const V1_serializeIngestMode = (
+export const V1_serializeIngestMode = (
   protocol: V1_IngestMode,
 ): PlainObject<V1_IngestMode> => {
   if (protocol instanceof V1_NontemporalSnapshot) {
@@ -649,7 +659,7 @@ const V1_serializeIngestMode = (
   throw new UnsupportedOperationError(`Can't serialize ingest mode`, protocol);
 };
 
-const V1_deserializeIngestMode = (
+export const V1_deserializeIngestMode = (
   json: PlainObject<V1_IngestMode>,
 ): V1_IngestMode => {
   switch (json._type) {
@@ -678,12 +688,12 @@ const V1_deserializeIngestMode = (
  * sink
  **********/
 
-enum V1_SinkType {
+export enum V1_SinkType {
   RELATIONAL_SINK = 'relationalSink',
   OBJECT_STORAGE_SINK = 'objectStorageSink',
 }
 
-const V1_relationalSinkModelSchema = (
+export const V1_relationalSinkModelSchema = (
   plugins: PureProtocolProcessorPlugin[],
 ): ModelSchema<V1_RelationalSink> =>
   createModelSchema(V1_RelationalSink, {
@@ -694,7 +704,7 @@ const V1_relationalSinkModelSchema = (
     ),
   });
 
-const V1_objectStorageSinkModelSchema = (
+export const V1_objectStorageSinkModelSchema = (
   plugins: PureProtocolProcessorPlugin[],
 ): ModelSchema<V1_ObjectStorageSink> =>
   createModelSchema(V1_ObjectStorageSink, {
@@ -706,7 +716,7 @@ const V1_objectStorageSinkModelSchema = (
     ),
   });
 
-const V1_serializeSink = (
+export const V1_serializeSink = (
   protocol: V1_Sink,
   plugins: PureProtocolProcessorPlugin[],
 ): PlainObject<V1_Sink> => {
@@ -718,7 +728,7 @@ const V1_serializeSink = (
   throw new UnsupportedOperationError(`Can't serialize sink`, protocol);
 };
 
-const V1_deserializeSink = (
+export const V1_deserializeSink = (
   json: PlainObject<V1_Sink>,
   plugins: PureProtocolProcessorPlugin[],
 ): V1_Sink => {
@@ -738,14 +748,14 @@ const V1_deserializeSink = (
  * deduplication strategy
  **********/
 
-enum V1_DeduplicationStrategyType {
+export enum V1_DeduplicationStrategyType {
   NO_DEDUPLICATION_STRATEGY = 'noDeduplicationStrategy',
   ANY_VERSION_DEDUPLICATION_STRATEGY = 'anyVersionDeduplicationStrategy',
   MAX_VERSION_DEDUPLICATION_STRATEGY = 'maxVersionDeduplicationStrategy',
   DUPLICATE_COUNT_DEDUPLICATION_STRATEGY = 'duplicateCountDeduplicationStrategy',
 }
 
-const V1_noDeduplicationStrategyModelSchema = createModelSchema(
+export const V1_noDeduplicationStrategyModelSchema = createModelSchema(
   V1_NoDeduplicationStrategy,
   {
     _type: usingConstantValueSchema(
@@ -754,7 +764,7 @@ const V1_noDeduplicationStrategyModelSchema = createModelSchema(
   },
 );
 
-const V1_anyVersionDeduplicationStrategyModelSchema = createModelSchema(
+export const V1_anyVersionDeduplicationStrategyModelSchema = createModelSchema(
   V1_AnyVersionDeduplicationStrategy,
   {
     _type: usingConstantValueSchema(
@@ -763,7 +773,7 @@ const V1_anyVersionDeduplicationStrategyModelSchema = createModelSchema(
   },
 );
 
-const V1_maxVersionDeduplicationStrategyModelSchema = createModelSchema(
+export const V1_maxVersionDeduplicationStrategyModelSchema = createModelSchema(
   V1_MaxVersionDeduplicationStrategy,
   {
     _type: usingConstantValueSchema(
@@ -773,17 +783,15 @@ const V1_maxVersionDeduplicationStrategyModelSchema = createModelSchema(
   },
 );
 
-const V1_duplicateCountDeduplicationStrategyModelSchema = createModelSchema(
-  V1_DuplicateCountDeduplicationStrategy,
-  {
+export const V1_duplicateCountDeduplicationStrategyModelSchema =
+  createModelSchema(V1_DuplicateCountDeduplicationStrategy, {
     _type: usingConstantValueSchema(
       V1_DeduplicationStrategyType.DUPLICATE_COUNT_DEDUPLICATION_STRATEGY,
     ),
     duplicateCountName: primitive(),
-  },
-);
+  });
 
-const V1_serializeDeduplicationStrategy = (
+export const V1_serializeDeduplicationStrategy = (
   protocol: V1_DeduplicationStrategy,
 ): PlainObject<V1_DeduplicationStrategy> => {
   if (protocol instanceof V1_NoDeduplicationStrategy) {
@@ -804,7 +812,7 @@ const V1_serializeDeduplicationStrategy = (
   );
 };
 
-const V1_deserializeDeduplicationStrategy = (
+export const V1_deserializeDeduplicationStrategy = (
   json: PlainObject<V1_DeduplicationStrategy>,
 ): V1_DeduplicationStrategy => {
   switch (json._type) {
@@ -830,12 +838,12 @@ const V1_deserializeDeduplicationStrategy = (
  * target shape
  **********/
 
-enum V1_TargetShapeType {
+export enum V1_TargetShapeType {
   FLAT_TARGET = 'flatTarget',
   MULTI_FLAT_TARGET = 'multiFlatTarget',
 }
 
-const V1_flatTargetModelSchema = createModelSchema(V1_FlatTarget, {
+export const V1_flatTargetModelSchema = createModelSchema(V1_FlatTarget, {
   _type: usingConstantValueSchema(V1_TargetShapeType.FLAT_TARGET),
   deduplicationStrategy: custom(
     (val) => V1_serializeDeduplicationStrategy(val),
@@ -846,37 +854,43 @@ const V1_flatTargetModelSchema = createModelSchema(V1_FlatTarget, {
   targetName: primitive(),
 });
 
-const V1_multiFlatTargetPartSchema = createModelSchema(V1_MultiFlatTargetPart, {
-  deduplicationStrategy: custom(
-    (val) => V1_serializeDeduplicationStrategy(val),
-    (val) => V1_deserializeDeduplicationStrategy(val),
-  ),
-  modelProperty: primitive(),
-  partitionFields: list(primitive()),
-  targetName: primitive(),
-});
+export const V1_multiFlatTargetPartSchema = createModelSchema(
+  V1_MultiFlatTargetPart,
+  {
+    deduplicationStrategy: custom(
+      (val) => V1_serializeDeduplicationStrategy(val),
+      (val) => V1_deserializeDeduplicationStrategy(val),
+    ),
+    modelProperty: primitive(),
+    partitionFields: list(primitive()),
+    targetName: primitive(),
+  },
+);
 
-const V1_multiFlatTargetModelSchema = createModelSchema(V1_MultiFlatTarget, {
-  _type: usingConstantValueSchema(V1_TargetShapeType.MULTI_FLAT_TARGET),
-  modelClass: primitive(),
-  parts: custom(
-    (val) =>
-      serializeArray(
-        val,
-        (v) => serialize(V1_multiFlatTargetPartSchema, v),
-        true,
-      ),
-    (val) =>
-      deserializeArray(
-        val,
-        (v) => deserialize(V1_multiFlatTargetPartSchema, v),
-        false,
-      ),
-  ),
-  transactionScope: primitive(),
-});
+export const V1_multiFlatTargetModelSchema = createModelSchema(
+  V1_MultiFlatTarget,
+  {
+    _type: usingConstantValueSchema(V1_TargetShapeType.MULTI_FLAT_TARGET),
+    modelClass: primitive(),
+    parts: custom(
+      (val) =>
+        serializeArray(
+          val,
+          (v) => serialize(V1_multiFlatTargetPartSchema, v),
+          true,
+        ),
+      (val) =>
+        deserializeArray(
+          val,
+          (v) => deserialize(V1_multiFlatTargetPartSchema, v),
+          false,
+        ),
+    ),
+    transactionScope: primitive(),
+  },
+);
 
-const V1_serializeTargetShape = (
+export const V1_serializeTargetShape = (
   protocol: V1_TargetShape,
 ): PlainObject<V1_TargetShape> => {
   if (protocol instanceof V1_MultiFlatTarget) {
@@ -887,7 +901,7 @@ const V1_serializeTargetShape = (
   throw new UnsupportedOperationError(`Can't serialize target shape`, protocol);
 };
 
-const V1_deserializeTargetShape = (
+export const V1_deserializeTargetShape = (
   json: PlainObject<V1_TargetShape>,
 ): V1_TargetShape => {
   switch (json._type) {
@@ -906,12 +920,12 @@ const V1_deserializeTargetShape = (
  * persister
  **********/
 
-enum V1_PersisterType {
+export enum V1_PersisterType {
   STREAMING_PERSISTER = 'streamingPersister',
   BATCH_PERSISTER = 'batchPersister',
 }
 
-const V1_streamingPersisterModelSchema = (
+export const V1_streamingPersisterModelSchema = (
   plugins: PureProtocolProcessorPlugin[],
 ): ModelSchema<V1_StreamingPersister> =>
   createModelSchema(V1_StreamingPersister, {
@@ -922,7 +936,7 @@ const V1_streamingPersisterModelSchema = (
     ),
   });
 
-const V1_batchPersisterModelSchema = (
+export const V1_batchPersisterModelSchema = (
   plugins: PureProtocolProcessorPlugin[],
 ): ModelSchema<V1_BatchPersister> =>
   createModelSchema(V1_BatchPersister, {
@@ -941,7 +955,7 @@ const V1_batchPersisterModelSchema = (
     ),
   });
 
-const V1_serializePersister = (
+export const V1_serializePersister = (
   protocol: V1_Persister,
   plugins: PureProtocolProcessorPlugin[],
 ): PlainObject<V1_Persister> => {
@@ -953,7 +967,7 @@ const V1_serializePersister = (
   throw new UnsupportedOperationError(`Can't serialize persister`, protocol);
 };
 
-const V1_deserializePersister = (
+export const V1_deserializePersister = (
   json: PlainObject<V1_Persister>,
   plugins: PureProtocolProcessorPlugin[],
 ): V1_Persister => {
@@ -973,16 +987,16 @@ const V1_deserializePersister = (
  * trigger
  **********/
 
-enum V1_TriggerType {
+export enum V1_TriggerType {
   MANUAL_TRIGGER = 'manualTrigger',
   CRON_TRIGGER = 'cronTrigger',
 }
 
-const V1_manualTriggerModelSchema = createModelSchema(V1_ManualTrigger, {
+export const V1_manualTriggerModelSchema = createModelSchema(V1_ManualTrigger, {
   _type: usingConstantValueSchema(V1_TriggerType.MANUAL_TRIGGER),
 });
 
-const V1_cronTriggerModelSchema = createModelSchema(V1_CronTrigger, {
+export const V1_cronTriggerModelSchema = createModelSchema(V1_CronTrigger, {
   _type: usingConstantValueSchema(V1_TriggerType.CRON_TRIGGER),
   minutes: primitive(),
   hours: primitive(),
@@ -991,7 +1005,9 @@ const V1_cronTriggerModelSchema = createModelSchema(V1_CronTrigger, {
   dayOfWeek: primitive(),
 });
 
-const V1_serializeTrigger = (protocol: V1_Trigger): PlainObject<V1_Trigger> => {
+export const V1_serializeTrigger = (
+  protocol: V1_Trigger,
+): PlainObject<V1_Trigger> => {
   if (protocol instanceof V1_ManualTrigger) {
     return serialize(V1_manualTriggerModelSchema, protocol);
   } else if (protocol instanceof V1_CronTrigger) {
@@ -1000,7 +1016,9 @@ const V1_serializeTrigger = (protocol: V1_Trigger): PlainObject<V1_Trigger> => {
   throw new UnsupportedOperationError(`Can't serialize trigger`, protocol);
 };
 
-const V1_deserializeTrigger = (json: PlainObject<V1_Trigger>): V1_Trigger => {
+export const V1_deserializeTrigger = (
+  json: PlainObject<V1_Trigger>,
+): V1_Trigger => {
   switch (json._type) {
     case V1_TriggerType.MANUAL_TRIGGER:
       return deserialize(V1_manualTriggerModelSchema, json);
