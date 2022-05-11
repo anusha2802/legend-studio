@@ -70,6 +70,7 @@ import type { StoreRelational_PureProtocolProcessorPlugin_Extension } from '../.
 import type { DSLMapping_PureProtocolProcessorPlugin_Extension } from '../../../../DSLMapping_PureProtocolProcessorPlugin_Extension';
 import { V1_ConnectionPointer } from '../../../model/packageableElements/connection/V1_ConnectionPointer';
 import { V1_AwsS3Connection } from '../../../model/packageableElements/connection/V1_AwsS3Connection';
+import { V1_AwsFinCloudConnection } from '../../../model/packageableElements/connection/V1_AwsFinCloudConnection';
 
 export const V1_PACKAGEABLE_CONNECTION_ELEMENT_PROTOCOL_TYPE = 'connection';
 
@@ -81,6 +82,7 @@ export enum V1_ConnectionType {
   XML_MODEL_CONNECTION = 'XmlModelConnection',
   FLAT_DATA_CONNECTION = 'FlatDataConnection',
   AWS_S3_CONNECTION = 'S3Connection',
+  AWS_FIN_CLOUD_CONNECTION = 'FinCloudConnection',
   RELATIONAL_DATABASE_CONNECTION = 'RelationalDatabaseConnection',
 }
 
@@ -164,6 +166,21 @@ export const V1_awsS3ConnectionModelSchema = createModelSchema(
     bucket: primitive(),
   },
 );
+
+export const V1_awsFinCloudConnectionModelSchema = (
+  plugins: PureProtocolProcessorPlugin[],
+): void => {
+  createModelSchema(V1_AwsFinCloudConnection, {
+    _type: usingConstantValueSchema(V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION),
+    store: alias('element', primitive()),
+    authenticationStrategy: custom(
+      (val) => V1_serializeAuthenticationStrategy(val, plugins),
+      (val) => V1_deserializeAuthenticationStrategy(val, plugins),
+    ),
+    datasetId: primitive(),
+    apiUrl: primitive(),
+  });
+};
 
 // ---------------------------------------- Datasource specification ----------------------------------------
 
@@ -574,6 +591,8 @@ export const V1_serializeConnectionValue = (
     return serialize(V1_RelationalDatabaseConnection, protocol);
   } else if (protocol instanceof V1_AwsS3Connection) {
     return serialize(V1_awsS3ConnectionModelSchema, protocol);
+  } else if (protocol instanceof V1_AwsFinCloudConnection) {
+    return serialize(V1_awsFinCloudConnectionModelSchema, protocol);
   } else if (protocol instanceof V1_ConnectionPointer) {
     if (allowPointer) {
       return serialize(V1_connectionPointerModelSchema, protocol);
@@ -616,6 +635,8 @@ export const V1_deserializeConnectionValue = (
       return deserialize(V1_flatDataConnectionModelSchema, json);
     case V1_ConnectionType.AWS_S3_CONNECTION:
       return deserialize(V1_awsS3ConnectionModelSchema, json);
+    case V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION:
+      return deserialize(V1_awsFinCloudConnectionModelSchema, json);
     case V1_ConnectionType.RELATIONAL_DATABASE_CONNECTION:
       return deserialize(V1_RelationalDatabaseConnection, json);
     case V1_ConnectionType.CONNECTION_POINTER:

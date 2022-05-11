@@ -98,6 +98,10 @@ import {
   AwsPartition,
   AwsS3Connection,
 } from '../../metamodels/pure/packageableElements/connection/AwsS3Connection';
+import { V1_AwsFinCloudConnection } from './v1/model/packageableElements/connection/V1_AwsFinCloudConnection';
+import { AwsFinCloudConnection } from '../../metamodels/pure/packageableElements/connection/AwsFinCloudConnection';
+import { V1_buildAuthenticationStrategy } from './v1/transformation/pureGraph/to/helpers/V1_RelationalConnectionBuilderHelper';
+import { V1_transformAuthenticationStrategy } from './v1/transformation/pureGraph/from/V1_ConnectionTransformer';
 
 const BINDING_ELEMENT_CLASSIFIER_PATH =
   'meta::external::shared::format::binding::Binding';
@@ -395,6 +399,36 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           awsS3Connection.bucket = connection.bucket;
 
           return awsS3Connection;
+        } else if (connection instanceof V1_AwsFinCloudConnection) {
+          const Store = !store
+            ? V1_resolveBinding(
+                guaranteeNonNullable(
+                  connection.store,
+                  `External format connection 'store' field is missing`,
+                ),
+                context,
+              )
+            : connection.store
+            ? V1_resolveBinding(connection.store, context)
+            : ((): PackageableElementReference<Binding> => {
+                assertType(
+                  store.value,
+                  Binding,
+                  `External format connection store must be a Binding`,
+                );
+                return store as PackageableElementReference<Binding>;
+              })();
+
+          const awsFinCloudConnection = new AwsFinCloudConnection(Store);
+          awsFinCloudConnection.authenticationStrategy =
+            this.V1_buildAuthenticationStrategy(
+              connection.authenticationStrategy,
+              context,
+            );
+          awsFinCloudConnection.datasetId = connection.datasetId;
+          awsFinCloudConnection.apiUrl = connection.apiUrl;
+
+          return awsFinCloudConnection;
         }
         return undefined;
       },
@@ -437,6 +471,18 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           );
           connection.region = metamodel.region;
           connection.bucket = metamodel.bucket;
+          return connection;
+        } else if (metamodel instanceof AwsFinCloudConnection) {
+          const connection = new V1_AwsFinCloudConnection();
+          connection.store = V1_transformElementReference(metamodel.store);
+          connection.authenticationStrategy =
+            //can use from V1_ConnectionTransformer ? or to rewrite fn/ export const?
+            this.V1_transformAuthenticationStrategy(
+              metamodel.authenticationStrategy,
+              context,
+            );
+          connection.datasetId = metamodel.datasetId;
+          connection.apiUrl = metamodel.apiUrl;
           return connection;
         }
         return undefined;
