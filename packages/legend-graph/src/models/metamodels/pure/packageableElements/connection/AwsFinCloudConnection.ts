@@ -17,18 +17,20 @@
 import { Connection, type ConnectionVisitor } from './Connection';
 import { CORE_HASH_STRUCTURE } from '../../../../../MetaModelConst';
 import { hashArray } from '@finos/legend-shared';
-import type { AuthenticationStrategy } from './AuthenticationStrategy';
-import { PackageableElementReference } from '../PackageableElementReference';
-import { Database } from '../store/relational/model/Database';
-import { DatabaseType } from '../store/relational/connection/RelationalDatabaseConnection';
+import type { AuthenticationStrategy } from '../store/relational/connection/AuthenticationStrategy';
+import type { PackageableElementReference } from '../PackageableElementReference';
+import type { Binding } from '../externalFormat/store/DSLExternalFormat_Binding';
 
 export class AwsFinCloudConnection extends Connection {
-  declare store: PackageableElementReference<Database>;
   datasetId!: string;
   authenticationStrategy: AuthenticationStrategy;
   apiUrl!: string;
 
-  constructor(store: PackageableElementReference<Database>) {
+  // how to write constructor without store?
+  constructor(
+    store: PackageableElementReference<Binding>, //keep it an empty ref?
+    authenticationStrategy: AuthenticationStrategy,
+  ) {
     super(store);
     this.authenticationStrategy = authenticationStrategy;
   }

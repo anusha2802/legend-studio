@@ -167,21 +167,6 @@ export const V1_awsS3ConnectionModelSchema = createModelSchema(
   },
 );
 
-export const V1_awsFinCloudConnectionModelSchema = (
-  plugins: PureProtocolProcessorPlugin[],
-): void => {
-  createModelSchema(V1_AwsFinCloudConnection, {
-    _type: usingConstantValueSchema(V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION),
-    store: alias('element', primitive()),
-    authenticationStrategy: custom(
-      (val) => V1_serializeAuthenticationStrategy(val, plugins),
-      (val) => V1_deserializeAuthenticationStrategy(val, plugins),
-    ),
-    datasetId: primitive(),
-    apiUrl: primitive(),
-  });
-};
-
 // ---------------------------------------- Datasource specification ----------------------------------------
 
 enum V1_DatasourceSpecificationType {
@@ -592,7 +577,7 @@ export const V1_serializeConnectionValue = (
   } else if (protocol instanceof V1_AwsS3Connection) {
     return serialize(V1_awsS3ConnectionModelSchema, protocol);
   } else if (protocol instanceof V1_AwsFinCloudConnection) {
-    return serialize(V1_awsFinCloudConnectionModelSchema, protocol);
+    return serialize(V1_AwsFinCloudConnection, protocol);
   } else if (protocol instanceof V1_ConnectionPointer) {
     if (allowPointer) {
       return serialize(V1_connectionPointerModelSchema, protocol);
@@ -619,6 +604,21 @@ export const V1_serializeConnectionValue = (
   );
 };
 
+export const V1_awsFinCloudConnectionModelSchema = (
+  plugins: PureProtocolProcessorPlugin[],
+): void => {
+  createModelSchema(V1_AwsFinCloudConnection, {
+    _type: usingConstantValueSchema(V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION),
+    store: alias('element', primitive()),
+    authenticationStrategy: custom(
+      (val) => V1_serializeAuthenticationStrategy(val, plugins),
+      (val) => V1_deserializeAuthenticationStrategy(val, plugins),
+    ),
+    datasetId: primitive(),
+    apiUrl: primitive(),
+  });
+};
+
 export const V1_deserializeConnectionValue = (
   json: PlainObject<V1_Connection>,
   allowPointer: boolean,
@@ -636,7 +636,7 @@ export const V1_deserializeConnectionValue = (
     case V1_ConnectionType.AWS_S3_CONNECTION:
       return deserialize(V1_awsS3ConnectionModelSchema, json);
     case V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION:
-      return deserialize(V1_awsFinCloudConnectionModelSchema, json);
+      return deserialize(V1_AwsFinCloudConnection, json);
     case V1_ConnectionType.RELATIONAL_DATABASE_CONNECTION:
       return deserialize(V1_RelationalDatabaseConnection, json);
     case V1_ConnectionType.CONNECTION_POINTER:

@@ -100,13 +100,122 @@ import {
 } from '../../metamodels/pure/packageableElements/connection/AwsS3Connection';
 import { V1_AwsFinCloudConnection } from './v1/model/packageableElements/connection/V1_AwsFinCloudConnection';
 import { AwsFinCloudConnection } from '../../metamodels/pure/packageableElements/connection/AwsFinCloudConnection';
+import type { AuthenticationStrategy } from '../../metamodels/pure/packageableElements/store/relational/connection/AuthenticationStrategy';
+import {
+  ApiTokenAuthenticationStrategy,
+  AwsOAuthAuthenticationStrategy,
+  AwsPkAuthenticationStrategy,
+  DefaultH2AuthenticationStrategy,
+  DelegatedKerberosAuthenticationStrategy,
+  GCPApplicationDefaultCredentialsAuthenticationStrategy,
+  OAuthAuthenticationStrategy,
+  SnowflakePublicAuthenticationStrategy,
+  UsernamePasswordAuthenticationStrategy,
+} from '../../metamodels/pure/packageableElements/store/relational/connection/AuthenticationStrategy';
+import type { V1_AuthenticationStrategy } from './v1/model/packageableElements/store/relational/connection/V1_AuthenticationStrategy';
+import {
+  V1_ApiTokenAuthenticationStrategy,
+  V1_AwsOAuthAuthenticationStrategy,
+  V1_AwsPkAuthenticationStrategy,
+  V1_DefaultH2AuthenticationStrategy,
+  V1_DelegatedKerberosAuthenticationStrategy,
+  V1_GCPApplicationDefaultCredentialsAuthenticationStrategy,
+  V1_OAuthAuthenticationStrategy,
+  V1_SnowflakePublicAuthenticationStrategy,
+  V1_UsernamePasswordAuthenticationStrategy,
+} from './v1/model/packageableElements/store/relational/connection/V1_AuthenticationStrategy';
+import type { StoreRelational_PureProtocolProcessorPlugin_Extension } from './StoreRelational_PureProtocolProcessorPlugin_Extension';
 import { V1_buildAuthenticationStrategy } from './v1/transformation/pureGraph/to/helpers/V1_RelationalConnectionBuilderHelper';
-import { V1_transformAuthenticationStrategy } from './v1/transformation/pureGraph/from/V1_ConnectionTransformer';
 
 const BINDING_ELEMENT_CLASSIFIER_PATH =
   'meta::external::shared::format::binding::Binding';
 const SCHEMA_SET_ELEMENT_CLASSIFIER_PATH =
   'meta::external::shared::format::metamodel::SchemaSet';
+
+const transformOAuthtAuthenticationStrategy = (
+  metamodel: OAuthAuthenticationStrategy,
+): V1_OAuthAuthenticationStrategy => {
+  const auth = new V1_OAuthAuthenticationStrategy();
+  auth.oauthKey = metamodel.oauthKey;
+  auth.scopeName = metamodel.scopeName;
+  return auth;
+};
+
+const transformAwsOAuthAuthenticationStrategy = (
+  metamodel: AwsOAuthAuthenticationStrategy,
+): V1_AwsOAuthAuthenticationStrategy => {
+  const auth = new V1_AwsOAuthAuthenticationStrategy();
+  auth.secretArn = metamodel.secretArn;
+  auth.discoveryUrl = metamodel.discoveryUrl;
+  return auth;
+};
+
+const transformAwsPkAuthenticationStrategy = (
+  metamodel: AwsPkAuthenticationStrategy,
+): V1_AwsPkAuthenticationStrategy => {
+  const auth = new V1_AwsPkAuthenticationStrategy();
+  auth.secretArn = metamodel.secretArn;
+  auth.user = metamodel.user;
+  return auth;
+};
+
+const transformAuthenticationStrategy = (
+  metamodel: AuthenticationStrategy,
+  context: V1_GraphTransformerContext,
+): V1_AuthenticationStrategy => {
+  if (metamodel instanceof DefaultH2AuthenticationStrategy) {
+    return new V1_DefaultH2AuthenticationStrategy();
+  } else if (metamodel instanceof DelegatedKerberosAuthenticationStrategy) {
+    const auth = new V1_DelegatedKerberosAuthenticationStrategy();
+    auth.serverPrincipal = metamodel.serverPrincipal;
+    return auth;
+  } else if (metamodel instanceof OAuthAuthenticationStrategy) {
+    return transformOAuthtAuthenticationStrategy(metamodel);
+  } else if (metamodel instanceof AwsOAuthAuthenticationStrategy) {
+    return transformAwsOAuthAuthenticationStrategy(metamodel);
+  } else if (metamodel instanceof AwsPkAuthenticationStrategy) {
+    return transformAwsPkAuthenticationStrategy(metamodel);
+  } else if (metamodel instanceof ApiTokenAuthenticationStrategy) {
+    const auth = new V1_ApiTokenAuthenticationStrategy();
+    auth.apiToken = metamodel.apiToken;
+    return auth;
+  } else if (metamodel instanceof SnowflakePublicAuthenticationStrategy) {
+    const auth = new V1_SnowflakePublicAuthenticationStrategy();
+    auth.privateKeyVaultReference = metamodel.privateKeyVaultReference;
+    auth.passPhraseVaultReference = metamodel.passPhraseVaultReference;
+    auth.publicUserName = metamodel.publicUserName;
+    return auth;
+  } else if (
+    metamodel instanceof GCPApplicationDefaultCredentialsAuthenticationStrategy
+  ) {
+    const auth =
+      new V1_GCPApplicationDefaultCredentialsAuthenticationStrategy();
+    return auth;
+  } else if (metamodel instanceof UsernamePasswordAuthenticationStrategy) {
+    const auth = new V1_UsernamePasswordAuthenticationStrategy();
+    auth.baseVaultReference = metamodel.baseVaultReference;
+    auth.userNameVaultReference = metamodel.userNameVaultReference;
+    auth.passwordVaultReference = metamodel.passwordVaultReference;
+    return auth;
+  }
+  const extraConnectionAuthenticationStrategyTransformers =
+    context.plugins.flatMap(
+      (plugin) =>
+        (
+          plugin as StoreRelational_PureProtocolProcessorPlugin_Extension
+        ).V1_getExtraConnectionAuthenticationStrategyTransformers?.() ?? [],
+    );
+  for (const transformer of extraConnectionAuthenticationStrategyTransformers) {
+    const protocol = transformer(metamodel, context);
+    if (protocol) {
+      return protocol;
+    }
+  }
+  throw new UnsupportedOperationError(
+    `Can't transform authentication strategy: no compatible transformer available from plugins`,
+    metamodel,
+  );
+};
 
 export class DSLExternalFormat_PureProtocolProcessorPlugin
   extends PureProtocolProcessorPlugin
@@ -419,12 +528,13 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
                 return store as PackageableElementReference<Binding>;
               })();
 
-          const awsFinCloudConnection = new AwsFinCloudConnection(Store);
-          awsFinCloudConnection.authenticationStrategy =
-            this.V1_buildAuthenticationStrategy(
+          const awsFinCloudConnection = new AwsFinCloudConnection(
+            Store,
+            V1_buildAuthenticationStrategy(
               connection.authenticationStrategy,
               context,
-            );
+            ),
+          );
           awsFinCloudConnection.datasetId = connection.datasetId;
           awsFinCloudConnection.apiUrl = connection.apiUrl;
 
@@ -477,7 +587,7 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           connection.store = V1_transformElementReference(metamodel.store);
           connection.authenticationStrategy =
             //can use from V1_ConnectionTransformer ? or to rewrite fn/ export const?
-            this.V1_transformAuthenticationStrategy(
+            transformAuthenticationStrategy(
               metamodel.authenticationStrategy,
               context,
             );

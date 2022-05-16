@@ -17,7 +17,7 @@
 import { V1_Connection, type V1_ConnectionVisitor } from './V1_Connection';
 import { CORE_HASH_STRUCTURE } from '../../../../../../../MetaModelConst';
 import { Hashable, hashArray } from '@finos/legend-shared';
-import type { V1_AuthenticationStrategy } from './V1_AuthenticationStrategy';
+import type { V1_AuthenticationStrategy } from '../store/relational/connection/V1_AuthenticationStrategy';
 
 export class V1_AwsFinCloudConnection
   extends V1_Connection
