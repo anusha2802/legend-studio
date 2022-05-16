@@ -82,7 +82,7 @@ export enum V1_ConnectionType {
   XML_MODEL_CONNECTION = 'XmlModelConnection',
   FLAT_DATA_CONNECTION = 'FlatDataConnection',
   AWS_S3_CONNECTION = 'S3Connection',
-  AWS_FIN_CLOUD_CONNECTION = 'FinCloudConnection',
+  AWS_FIN_CLOUD_CONNECTION = 'AwsFinCloudConnection',
   RELATIONAL_DATABASE_CONNECTION = 'RelationalDatabaseConnection',
 }
 
@@ -604,6 +604,9 @@ export const V1_serializeConnectionValue = (
   );
 };
 
+/******************************* 
+Anusha original
+
 export const V1_awsFinCloudConnectionModelSchema = (
   plugins: PureProtocolProcessorPlugin[],
 ): void => {
@@ -618,6 +621,38 @@ export const V1_awsFinCloudConnectionModelSchema = (
     apiUrl: primitive(),
   });
 };
+
+Mine:
+
+export const V1_awsFinCloudConnectionModelSchema = createModelSchema(
+  V1_AwsFinCloudConnection,
+  {
+    _type: usingConstantValueSchema(V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION),
+    store: alias('element', primitive()),
+    apiUrl: primitive(),
+    authenticationStrategy: custom(
+      (val) => V1_serializeAuthenticationStrategy(val, plugins),
+      (val) => V1_deserializeAuthenticationStrategy(val, plugins),
+    ),
+    datasetId: primitive(),
+  },
+);
+******************************/
+
+export const V1_awsFinCloudConnectionModelSchema = (
+  plugins: PureProtocolProcessorPlugin[],
+): ModelSchema<V1_AwsFinCloudConnection> =>
+  createModelSchema(V1_AwsFinCloudConnection, {
+    _type: usingConstantValueSchema(V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION),
+    store: alias('element', primitive()),
+    authenticationStrategy: custom(
+      (val) => V1_serializeAuthenticationStrategy(val, plugins),
+      (val) => V1_deserializeAuthenticationStrategy(val, plugins),
+    ),
+    datasetId: primitive(),
+    apiUrl: primitive(),
+  });
+
 
 export const V1_deserializeConnectionValue = (
   json: PlainObject<V1_Connection>,
@@ -636,7 +671,7 @@ export const V1_deserializeConnectionValue = (
     case V1_ConnectionType.AWS_S3_CONNECTION:
       return deserialize(V1_awsS3ConnectionModelSchema, json);
     case V1_ConnectionType.AWS_FIN_CLOUD_CONNECTION:
-      return deserialize(V1_AwsFinCloudConnection, json);
+      return deserialize(V1_awsFinCloudConnectionModelSchema(plugins), json);
     case V1_ConnectionType.RELATIONAL_DATABASE_CONNECTION:
       return deserialize(V1_RelationalDatabaseConnection, json);
     case V1_ConnectionType.CONNECTION_POINTER:
