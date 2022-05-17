@@ -506,6 +506,7 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           );
           awsS3Connection.region = connection.region;
           awsS3Connection.bucket = connection.bucket;
+          awsS3Connection.key = connection.key;
 
           return awsS3Connection;
         } else if (connection instanceof V1_AwsFinCloudConnection) {
@@ -537,6 +538,7 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           );
           awsFinCloudConnection.datasetId = connection.datasetId;
           awsFinCloudConnection.apiUrl = connection.apiUrl;
+          awsFinCloudConnection.queryInfo = connection.queryInfo;
 
           return awsFinCloudConnection;
         }
@@ -581,6 +583,7 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
           );
           connection.region = metamodel.region;
           connection.bucket = metamodel.bucket;
+          connection.key = metamodel.key;
           return connection;
         } else if (metamodel instanceof AwsFinCloudConnection) {
           const connection = new V1_AwsFinCloudConnection();
@@ -593,6 +596,7 @@ export class DSLExternalFormat_PureProtocolProcessorPlugin
             );
           connection.datasetId = metamodel.datasetId;
           connection.apiUrl = metamodel.apiUrl;
+          connection.queryInfo = metamodel.queryInfo;
           return connection;
         }
         return undefined;

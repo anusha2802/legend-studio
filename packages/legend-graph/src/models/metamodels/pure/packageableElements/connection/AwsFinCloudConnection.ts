@@ -25,7 +25,7 @@ export class AwsFinCloudConnection extends Connection {
   datasetId!: string;
   authenticationStrategy: AuthenticationStrategy;
   apiUrl!: string;
-
+  queryInfo!: string;
   // how to write constructor without store?
   constructor(
     store: PackageableElementReference<Binding>, //keep it an empty ref?
@@ -46,6 +46,7 @@ export class AwsFinCloudConnection extends Connection {
       this.datasetId,
       this.authenticationStrategy,
       this.apiUrl,
+      this.queryInfo,
     ]);
   }
 }

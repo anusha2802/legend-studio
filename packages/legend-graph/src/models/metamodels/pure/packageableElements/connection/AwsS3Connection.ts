@@ -22,6 +22,7 @@ export class AwsS3Connection extends Connection {
   partition!: AwsPartition;
   region!: string;
   bucket!: string;
+  key!: string;
 
   accept_ConnectionVisitor<T>(visitor: ConnectionVisitor<T>): T {
     return visitor.visit_Connection(this);
@@ -33,6 +34,7 @@ export class AwsS3Connection extends Connection {
       this.partition,
       this.region,
       this.bucket,
+      this.key,
     ]);
   }
 }

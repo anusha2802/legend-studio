@@ -26,6 +26,7 @@ export class V1_AwsFinCloudConnection
   authenticationStrategy!: V1_AuthenticationStrategy;
   datasetId!: string;
   apiUrl!: string;
+  queryInfo!: string;
 
   accept_ConnectionVisitor<T>(visitor: V1_ConnectionVisitor<T>): T {
     return visitor.visit_Connection(this);
@@ -37,6 +38,7 @@ export class V1_AwsFinCloudConnection
       this.authenticationStrategy,
       this.datasetId,
       this.apiUrl,
+      this.queryInfo,
     ]);
   }
 }

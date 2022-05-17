@@ -22,6 +22,7 @@ export class V1_AwsS3Connection extends V1_Connection {
   partition!: V1_AwsPartition;
   region!: string;
   bucket!: string;
+  key!: string;
 
   accept_ConnectionVisitor<T>(visitor: V1_ConnectionVisitor<T>): T {
     return visitor.visit_Connection(this);
@@ -33,6 +34,7 @@ export class V1_AwsS3Connection extends V1_Connection {
       this.partition,
       this.region,
       this.bucket,
+      this.key,
     ]);
   }
 }

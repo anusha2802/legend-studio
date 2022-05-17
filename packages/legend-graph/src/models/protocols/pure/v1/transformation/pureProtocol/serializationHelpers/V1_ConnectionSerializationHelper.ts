@@ -164,6 +164,7 @@ export const V1_awsS3ConnectionModelSchema = createModelSchema(
     partition: primitive(),
     region: primitive(),
     bucket: primitive(),
+    key: primitive(),
   },
 );
 
@@ -604,7 +605,7 @@ export const V1_serializeConnectionValue = (
   );
 };
 
-/******************************* 
+/*******************************
 Anusha original
 
 export const V1_awsFinCloudConnectionModelSchema = (
@@ -619,6 +620,7 @@ export const V1_awsFinCloudConnectionModelSchema = (
     ),
     datasetId: primitive(),
     apiUrl: primitive(),
+    queryInfo: primitive(),
   });
 };
 
@@ -635,6 +637,7 @@ export const V1_awsFinCloudConnectionModelSchema = createModelSchema(
       (val) => V1_deserializeAuthenticationStrategy(val, plugins),
     ),
     datasetId: primitive(),
+    queryInfo: primitive(),
   },
 );
 ******************************/
@@ -651,8 +654,8 @@ export const V1_awsFinCloudConnectionModelSchema = (
     ),
     datasetId: primitive(),
     apiUrl: primitive(),
+    queryInfo: primitive(),
   });
-
 
 export const V1_deserializeConnectionValue = (
   json: PlainObject<V1_Connection>,
