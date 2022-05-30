@@ -69,6 +69,7 @@ import {
 } from '../../../../../../metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persister';
 import {
   ObjectStorageSink,
+  FinancialCloudSink,
   RelationalSink,
   type Sink,
 } from '../../../../../../metamodels/pure/model/packageableElements/persistence/DSLPersistence_Sink';
@@ -139,6 +140,7 @@ import {
 } from '../../../model/packageableElements/persistence/V1_DSLPersistence_Persister';
 import {
   V1_ObjectStorageSink,
+  V1_FinancialCloudSink,
   V1_RelationalSink,
   type V1_Sink,
 } from '../../../model/packageableElements/persistence/V1_DSLPersistence_Sink';
@@ -203,6 +205,19 @@ export const V1_transformRelationalSink = (
   return protocol;
 };
 
+export const V1_transformFinancialCloudSink = (
+  element: FinancialCloudSink,
+  context: V1_GraphTransformerContext,
+): V1_FinancialCloudSink => {
+  const protocol = new V1_FinancialCloudSink();
+  protocol.connection = V1_transformConnection(
+    element.connection,
+    true,
+    context,
+  );
+  return protocol;
+};
+
 export const V1_transformObjectStorageSink = (
   element: ObjectStorageSink,
   context: V1_GraphTransformerContext,
@@ -225,6 +240,8 @@ export const V1_transformSink = (
     return V1_transformRelationalSink(element, context);
   } else if (element instanceof ObjectStorageSink) {
     return V1_transformObjectStorageSink(element, context);
+  } else if (element instanceof FinancialCloudSink) {
+    return V1_transformFinancialCloudSink(element, context);
   }
   throw new UnsupportedOperationError(`Can't transform sink '${element}'`);
 };

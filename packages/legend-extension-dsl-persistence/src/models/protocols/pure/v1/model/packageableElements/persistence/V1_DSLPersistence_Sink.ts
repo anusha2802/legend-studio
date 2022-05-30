@@ -45,3 +45,14 @@ export class V1_ObjectStorageSink extends V1_Sink implements Hashable {
     ]);
   }
 }
+
+export class V1_FinancialCloudSink extends V1_Sink implements Hashable {
+  connection!: V1_Connection;
+
+  override get hashCode(): string {
+    return hashArray([
+      PERSISTENCE_HASH_STRUCTURE.FINANCIAL_CLOUD_SINK,
+      this.connection,
+    ]);
+  }
+}

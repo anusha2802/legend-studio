@@ -51,6 +51,7 @@ import {
 } from '../../model/packageableElements/persistence/V1_DSLPersistence_Notifier';
 import {
   V1_ObjectStorageSink,
+  V1_FinancialCloudSink,
   V1_RelationalSink,
   type V1_Sink,
 } from '../../model/packageableElements/persistence/V1_DSLPersistence_Sink';
@@ -697,6 +698,7 @@ export const V1_deserializeIngestMode = (
 
 export enum V1_SinkType {
   RELATIONAL_SINK = 'relationalSink',
+  FINANCIAL_CLOUD_SINK = 'financialCloudSink',
   OBJECT_STORAGE_SINK = 'objectStorageSink',
 }
 
@@ -707,6 +709,17 @@ export const V1_relationalSinkModelSchema = (
     _type: usingConstantValueSchema(V1_SinkType.RELATIONAL_SINK),
     connection: custom(
       (val) => (val ? V1_serializeConnectionValue(val, true, plugins) : SKIP),
+      (val) => V1_deserializeConnectionValue(val, true, plugins),
+    ),
+  });
+
+export const V1_financialCloudSinkModelSchema = (
+  plugins: PureProtocolProcessorPlugin[],
+): ModelSchema<V1_FinancialCloudSink> =>
+  createModelSchema(V1_FinancialCloudSink, {
+    _type: usingConstantValueSchema(V1_SinkType.FINANCIAL_CLOUD_SINK),
+    connection: custom(
+      (val) => V1_serializeConnectionValue(val, true, plugins),
       (val) => V1_deserializeConnectionValue(val, true, plugins),
     ),
   });
@@ -731,6 +744,8 @@ export const V1_serializeSink = (
     return serialize(V1_relationalSinkModelSchema(plugins), protocol);
   } else if (protocol instanceof V1_ObjectStorageSink) {
     return serialize(V1_objectStorageSinkModelSchema(plugins), protocol);
+  } else if (protocol instanceof V1_FinancialCloudSink) {
+    return serialize(V1_financialCloudSinkModelSchema(plugins), protocol);
   }
   throw new UnsupportedOperationError(`Can't serialize sink`, protocol);
 };
@@ -744,6 +759,8 @@ export const V1_deserializeSink = (
       return deserialize(V1_relationalSinkModelSchema(plugins), json);
     case V1_SinkType.OBJECT_STORAGE_SINK:
       return deserialize(V1_objectStorageSinkModelSchema(plugins), json);
+    case V1_SinkType.FINANCIAL_CLOUD_SINK:
+      return deserialize(V1_financialCloudSinkModelSchema(plugins), json);
     default:
       throw new UnsupportedOperationError(
         `Can't deserialize sink '${json._type}'`,
