@@ -31,6 +31,7 @@ import {
   UnsupportedElementEditorState,
 } from '@finos/legend-studio';
 import { Persistence } from '../../models/metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persistence';
+import { PersistenceEditorState } from '../PersistenceEditorState';
 
 const PERSISTENCE_ELEMENT_TYPE = 'PERSISTENCE';
 const PERSISTENCE_ELEMENT_PROJECT_EXPLORER_DND_TYPE =
@@ -96,7 +97,7 @@ export class DSLPersistence_LegendStudioPlugin
         element: PackageableElement,
       ): ElementEditorState | undefined => {
         if (element instanceof Persistence) {
-          return new UnsupportedElementEditorState(editorStore, element);
+          return new PersistenceEditorState(editorStore, element);
         }
         return undefined;
       },
