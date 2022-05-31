@@ -69,6 +69,7 @@ import {
 } from '../../../model/packageableElements/persistence/V1_DSLPersistence_Persister';
 import {
   V1_ObjectStorageSink,
+  V1_FinancialCloudSink,
   V1_RelationalSink,
   type V1_Sink,
 } from '../../../model/packageableElements/persistence/V1_DSLPersistence_Sink';
@@ -138,6 +139,7 @@ import {
 } from '../../../../../../metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persister';
 import {
   ObjectStorageSink,
+  FinancialCloudSink,
   RelationalSink,
   type Sink,
 } from '../../../../../../metamodels/pure/model/packageableElements/persistence/DSLPersistence_Sink';
@@ -205,6 +207,17 @@ export const V1_buildRelationalSink = (
   return sink;
 };
 
+export const V1_buildFinancialCloudSink = (
+  protocol: V1_FinancialCloudSink,
+  context: V1_GraphBuilderContext,
+): FinancialCloudSink => {
+  const sink = new FinancialCloudSink();
+  sink.connection = protocol.connection.accept_ConnectionVisitor(
+    new V1_ProtocolToMetaModelConnectionBuilder(context),
+  );
+  return sink;
+};
+
 export const V1_buildObjectStorageSink = (
   protocol: V1_ObjectStorageSink,
   context: V1_GraphBuilderContext,
@@ -228,6 +241,8 @@ export const V1_buildSink = (
     return V1_buildRelationalSink(protocol, context);
   } else if (protocol instanceof V1_ObjectStorageSink) {
     return V1_buildObjectStorageSink(protocol, context);
+  } else if (protocol instanceof V1_FinancialCloudSink) {
+    return V1_buildFinancialCloudSink(protocol, context);
   }
   throw new UnsupportedOperationError(`Can't build sink`, protocol);
 };

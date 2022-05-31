@@ -49,3 +49,14 @@ export class ObjectStorageSink extends Sink implements Hashable {
     ]);
   }
 }
+
+export class FinancialCloudSink extends Sink implements Hashable {
+  connection!: Connection;
+
+  override get hashCode(): string {
+    return hashArray([
+      PERSISTENCE_HASH_STRUCTURE.FINANCIAL_CLOUD_SINK,
+      this.connection,
+    ]);
+  }
+}
