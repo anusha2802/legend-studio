@@ -29,9 +29,11 @@ import {
   type NewElementState,
   LegendStudioPlugin,
   UnsupportedElementEditorState,
+  ElementEditorRenderer,
 } from '@finos/legend-studio';
 import { Persistence } from '../../models/metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persistence';
 import { PersistenceEditorState } from '../PersistenceEditorState';
+import { PersistenceEditor } from './PersistenceEditor';
 
 const PERSISTENCE_ELEMENT_TYPE = 'PERSISTENCE';
 const PERSISTENCE_ELEMENT_PROJECT_EXPLORER_DND_TYPE =
@@ -98,6 +100,19 @@ export class DSLPersistence_LegendStudioPlugin
       ): ElementEditorState | undefined => {
         if (element instanceof Persistence) {
           return new PersistenceEditorState(editorStore, element);
+        }
+        return undefined;
+      },
+    ];
+  }
+
+  getExtraElementEditorRenderers(): ElementEditorRenderer[] {
+    return [
+      (
+        persistenceEditorState: ElementEditorState,
+      ): React.ReactNode | undefined => {
+        if (persistenceEditorState instanceof PersistenceEditorState) {
+          return <PersistenceEditor key={persistenceEditorState.uuid} />;
         }
         return undefined;
       },
