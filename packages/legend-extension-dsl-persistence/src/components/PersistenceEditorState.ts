@@ -1,33 +1,82 @@
 import type { EditorStore } from '@finos/legend-studio';
-import { ElementEditorState } from '@finos/legend-studio';
-import { action, computed, makeObservable, observable } from 'mobx';
+import {
+  ElementEditorState,
+  LEGEND_STUDIO_APP_EVENT,
+} from '@finos/legend-studio';
+import { action, computed, makeObservable, observable, flow } from 'mobx';
 import type { PackageableElement } from '@finos/legend-graph';
-import { guaranteeType } from '@finos/legend-shared';
+import type { GeneratorFn, PlainObject } from '@finos/legend-shared';
+import {
+  assertErrorThrown,
+  guaranteeType,
+  LogEvent,
+} from '@finos/legend-shared';
 import { Persistence } from '../models/metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persistence';
+import type { Monitor } from './studio/Monitor';
+import { PersistenceServerClient } from './studio/PersistenceServerClient';
+import type { PersistenceStore } from './studio/PersistenceStore';
 
-export enum SERVICE_TAB {
-  GENERAL = 'GENERAL',
-  EXECUTION = 'EXECUTION',
-  REGISTRATION = 'REGISTRATION',
-}
+const TRIGGER_LOG_EVENT_TYPE = 'TRIGGER_FAILURE';
 
 export class PersistenceEditorState extends ElementEditorState {
-  selectedTab = SERVICE_TAB.GENERAL;
-
+  helloNew?: string | undefined;
+  currentMonitor?: Monitor | undefined;
+  //private element: Persistence | undefined;
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
 
     makeObservable(this, {
-      selectedTab: observable,
-      setSelectedTab: action,
       persistence: computed,
+      //persistenceStore: false,
       reprocess: action,
+      helloNew: observable,
+      setTriggerName: action,
+      setCurrentMonitorData: action,
+      trigger: flow,
     });
   }
 
-  setSelectedTab(tab: SERVICE_TAB): void {
-    this.selectedTab = tab;
+  *trigger(): GeneratorFn<void> {
+    try {
+      this.helloNew = 'hello new';
+    } catch (error) {
+      assertErrorThrown(error);
+      this.editorStore.applicationStore.log.error(
+        LogEvent.create(TRIGGER_LOG_EVENT_TYPE),
+        error,
+      );
+      this.editorStore.applicationStore.notifyError(error);
+    }
   }
+
+  setCurrentMonitorData = (val: Monitor): void => {
+    this.currentMonitor = val;
+  };
+  setTriggerName(helloNew: string | undefined): void {
+    this.helloNew = helloNew;
+  }
+
+  /*
+  // difference in * and async fn?
+  *fetchMonitorData(groupId: string, artifactId: string): GeneratorFn<void> {
+    try {
+      this.currentMonitor = Monitor.serialization.fromJson(
+        (yield this.persistenceStore.persistenceServerClient.getMonitor(
+          // create a new file for these client classes+fns ?(PersistenceStore?)
+          // or in this file itself - where to define persistenceServerClient
+          groupId,
+          artifactId,
+        )) as PlainObject<Monitor>,
+      );
+    } catch (error) {
+      assertErrorThrown(error);
+      this.persistenceStore.applicationStore.log.error(
+        LogEvent.create(LEGEND_STUDIO_APP_EVENT.SDLC_MANAGER_FAILURE), // replace with right error st.
+        error,
+      );
+    }
+  }
+   */
 
   get persistence(): Persistence {
     return guaranteeType(
@@ -45,7 +94,6 @@ export class PersistenceEditorState extends ElementEditorState {
       editorStore,
       newElement,
     );
-    persistenceEditorState.selectedTab = this.selectedTab;
     return persistenceEditorState;
   }
 }
