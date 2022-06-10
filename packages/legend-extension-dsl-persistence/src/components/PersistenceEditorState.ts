@@ -31,6 +31,7 @@ export class PersistenceEditorState extends ElementEditorState {
       reprocess: action,
       helloNew: observable,
       setTriggerName: action,
+      setMonitorOutput: action,
       setCurrentMonitorData: action,
       trigger: flow,
     });
@@ -52,8 +53,13 @@ export class PersistenceEditorState extends ElementEditorState {
   setCurrentMonitorData = (val: Monitor): void => {
     this.currentMonitor = val;
   };
+
   setTriggerName(helloNew: string | undefined): void {
     this.helloNew = helloNew;
+  }
+
+  setMonitorOutput(): void {
+    this.helloNew = Date().toString();
   }
 
   /*

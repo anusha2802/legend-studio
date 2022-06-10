@@ -93,9 +93,7 @@ export const PersistenceEditor = observer(() => {
           isReadOnly={true}
           propertyName={''}
           value={persistenceEditorState.helloNew}
-          update={(value: string | undefined): void =>
-            persistenceEditorState.setTriggerName(value)
-          }
+          update={(value: string | undefined): void => persistenceEditorState.setTriggerName(value)}
         />
       </div>
       <br />
@@ -106,7 +104,7 @@ export const PersistenceEditor = observer(() => {
           className="persistence-refresh"
           tabIndex={-1}
           title="Refresh"
-          onClick={() => alert('hello')}
+          onClick={(): void => persistenceEditorState.setMonitorOutput()}
         >
           <RefreshIcon style={{ color: 'white', fontSize: '1.6rem' }} />
         </button>
