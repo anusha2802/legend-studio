@@ -12,7 +12,7 @@ import {
   LogEvent,
 } from '@finos/legend-shared';
 import { Persistence } from '../models/metamodels/pure/model/packageableElements/persistence/DSLPersistence_Persistence';
-import type { Monitor } from './studio/Monitor';
+import { Monitor } from './studio/Monitor';
 import { PersistenceServerClient } from './studio/PersistenceServerClient';
 import type { PersistenceStore } from './studio/PersistenceStore';
 
@@ -20,7 +20,7 @@ const TRIGGER_LOG_EVENT_TYPE = 'TRIGGER_FAILURE';
 
 export class PersistenceEditorState extends ElementEditorState {
   helloNew?: string | undefined;
-  currentMonitor?: Monitor | undefined;
+  currentMonitor?: Array<Monitor> | undefined;
   //private element: Persistence | undefined;
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
@@ -32,7 +32,6 @@ export class PersistenceEditorState extends ElementEditorState {
       helloNew: observable,
       setTriggerName: action,
       setMonitorOutput: action,
-      setCurrentMonitorData: action,
       trigger: flow,
     });
   }
@@ -50,16 +49,13 @@ export class PersistenceEditorState extends ElementEditorState {
     }
   }
 
-  setCurrentMonitorData = (val: Monitor): void => {
-    this.currentMonitor = val;
-  };
-
   setTriggerName(helloNew: string | undefined): void {
     this.helloNew = helloNew;
   }
 
   setMonitorOutput(): void {
-    this.helloNew = Date().toString();
+	// Make the monitor array be of size 10
+    this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
   }
 
   /*

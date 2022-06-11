@@ -121,12 +121,16 @@ export const PersistenceEditor = observer(() => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>abc</td>
-              <td>qwe</td>
-              <td>rty</td>
-              <td>fhg</td>
-            </tr>
+			{persistenceEditorState?.currentMonitor?.map(item => {
+				  return (
+					<tr>
+					  <td>{ item.startedOn }</td>
+					  <td>{ item.completedOn }</td>
+					  <td>{ item.jobState }</td>
+					  <td>{ item.exception }</td>
+					</tr>
+				  );
+				})}
           </tbody>
         </table>
       </div>
