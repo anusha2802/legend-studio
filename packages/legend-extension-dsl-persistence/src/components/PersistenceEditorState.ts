@@ -39,8 +39,13 @@ export class PersistenceEditorState extends ElementEditorState {
     });
   }
 
-  getPersistenceName(p: Package | undefined): string {
-      return (p === undefined) ? '' : this.getPersistenceName(p.package) + '_' + p.name;
+  getPersistenceName(p: Package | undefined): Array<string> {
+    if (p === undefined) {
+	    return [] as string[];
+	}
+	else {
+	    return (p!.name == 'ROOT') ? [] as string[] : [ ...this.getPersistenceName(p!.package), p!.name];
+	}
   }
 
   getFQN(pe: PackageableElement): string {
@@ -49,7 +54,7 @@ export class PersistenceEditorState extends ElementEditorState {
 
   *persistenceTrigger(): GeneratorFn<void> {
     try {
-	  const pname = this.getPersistenceName(this.element.package) + '_' + this.element.name;
+	  const pname = [ ...this.getPersistenceName(this.element.package), this.element.name].join('_');
 	  console.log(pname);
 
 	  const jobName = 'denali-trigger-' + Date.now();
