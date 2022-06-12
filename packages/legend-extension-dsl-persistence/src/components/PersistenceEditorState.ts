@@ -24,6 +24,8 @@ export class PersistenceEditorState extends ElementEditorState {
   //private element: Persistence | undefined;
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
+	console.log("RAJAMONY debug");
+	console.log(element);
 
     makeObservable(this, {
       persistence: computed,
@@ -31,7 +33,6 @@ export class PersistenceEditorState extends ElementEditorState {
       reprocess: action,
       helloNew: observable,
       setTriggerName: action,
-      setMonitorOutput: action,
       persistenceTrigger: flow,
       persistenceMonitor: flow,
     });
@@ -39,8 +40,10 @@ export class PersistenceEditorState extends ElementEditorState {
 
   *persistenceTrigger(): GeneratorFn<void> {
     try {
+	  // FIXME - perform the post here
+
       this.helloNew = 'Trigger ' + Date.now();
-      // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(Date().toString, i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+
     } catch (error) {
       assertErrorThrown(error);
       this.editorStore.applicationStore.log.error(
@@ -51,16 +54,9 @@ export class PersistenceEditorState extends ElementEditorState {
     }
   }
 
-  /*
-  const helper = (r: any, index: number) => {
-	return new Monitor(r["StartedOn"], r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]);
-  }
-  */
-
   *persistenceMonitor(): GeneratorFn<void> {
     try {
-      this.helloNew = 'Monitor ' + Date.now();
-      // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+      this.helloNew = 'Monitor ' + Date.now();		// FIXME: Remove this when done
 
 	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/monitortest/";
 	  const jobName = "denali";
@@ -69,9 +65,7 @@ export class PersistenceEditorState extends ElementEditorState {
       fetch(url).then(response => {
         if (response.ok) {
           response.json().then(json => {
-            alert(json);
-            console.log(json);
-			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
+			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
           });
         }
       });
@@ -88,45 +82,6 @@ export class PersistenceEditorState extends ElementEditorState {
   setTriggerName(helloNew: string | undefined): void {
     this.helloNew = helloNew;
   }
-
-  setMonitorOutput(): void {
-//	const baseUrl = `${this.baseUrl}/codeGeneration/awsPersistence/monitor/JOBNAME`;
-//	this.get(baseUrl).then((response) => alert (response));
-/*
-	fetch("http://ip.jsontest.com/").then(response => {
-	  if (response.ok) {
-		response.json().then(json => {
-		  alert(json);
-		  console.log(json);
-		});
-      }
-    });
-*/
-	// Make the monitor array be of size 10
-    // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
-  }
-
-  /*
-  // difference in * and async fn?
-  *fetchMonitorData(groupId: string, artifactId: string): GeneratorFn<void> {
-    try {
-      this.currentMonitor = Monitor.serialization.fromJson(
-        (yield this.persistenceStore.persistenceServerClient.getMonitor(
-          // create a new file for these client classes+fns ?(PersistenceStore?)
-          // or in this file itself - where to define persistenceServerClient
-          groupId,
-          artifactId,
-        )) as PlainObject<Monitor>,
-      );
-    } catch (error) {
-      assertErrorThrown(error);
-      this.persistenceStore.applicationStore.log.error(
-        LogEvent.create(LEGEND_STUDIO_APP_EVENT.SDLC_MANAGER_FAILURE), // replace with right error st.
-        error,
-      );
-    }
-  }
-   */
 
   get persistence(): Persistence {
     return guaranteeType(
