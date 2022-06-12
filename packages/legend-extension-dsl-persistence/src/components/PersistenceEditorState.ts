@@ -40,7 +40,22 @@ export class PersistenceEditorState extends ElementEditorState {
 
   *persistenceTrigger(): GeneratorFn<void> {
     try {
-	  // FIXME - perform the post here
+	  const jobName = 'denali-trigger-' + Date.now();
+	  const postobj = { jobName: jobName };
+	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/triggertest";
+      fetch(baseUrl, {
+	    method: 'POST',
+		body: JSON.stringify(postobj),
+        headers: {
+          'Content-Type': 'application/json'
+	    }
+	  }).then(response => {
+        if (response.ok) {
+          response.json().then(json => {
+			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
+          });
+        }
+      });
 
       this.helloNew = 'Trigger ' + Date.now();
 
@@ -59,7 +74,7 @@ export class PersistenceEditorState extends ElementEditorState {
       this.helloNew = 'Monitor ' + Date.now();		// FIXME: Remove this when done
 
 	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/monitortest/";
-	  const jobName = "denali";
+	  const jobName = 'denali-monitor-' + Date.now();
 	  const url = baseUrl + jobName;
 
       fetch(url).then(response => {
