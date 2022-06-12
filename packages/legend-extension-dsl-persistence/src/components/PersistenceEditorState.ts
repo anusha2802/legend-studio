@@ -4,7 +4,7 @@ import {
   LEGEND_STUDIO_APP_EVENT,
 } from '@finos/legend-studio';
 import { action, computed, makeObservable, observable, flow } from 'mobx';
-import type { PackageableElement } from '@finos/legend-graph';
+import type { Package, PackageableElement } from '@finos/legend-graph';
 import type { GeneratorFn, PlainObject } from '@finos/legend-shared';
 import {
   assertErrorThrown,
@@ -21,7 +21,7 @@ const TRIGGER_LOG_EVENT_TYPE = 'TRIGGER_FAILURE';
 export class PersistenceEditorState extends ElementEditorState {
   helloNew?: string | undefined;
   currentMonitor?: Array<Monitor> | undefined;
-  //private element: Persistence | undefined;
+  // element: PackageableElement | undefined;
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
 	console.log("RAJAMONY debug");
@@ -32,14 +32,26 @@ export class PersistenceEditorState extends ElementEditorState {
       //persistenceStore: false,
       reprocess: action,
       helloNew: observable,
+	  currentMonitor: observable,
       setTriggerName: action,
       persistenceTrigger: flow,
       persistenceMonitor: flow,
     });
   }
 
+  getPersistenceName(p: Package | undefined): string {
+      return (p === undefined) ? '' : this.getPersistenceName(p.package) + '_' + p.name;
+  }
+
+  getFQN(pe: PackageableElement): string {
+      return '';
+  }
+
   *persistenceTrigger(): GeneratorFn<void> {
     try {
+	  const pname = this.getPersistenceName(this.element.package) + '_' + this.element.name;
+	  console.log(pname);
+
 	  const jobName = 'denali-trigger-' + Date.now();
 	  const postobj = { jobName: jobName };
 	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/triggertest";
