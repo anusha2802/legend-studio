@@ -76,6 +76,12 @@ export const PersistenceEditor = observer(() => {
     );
   };
 
+  const monitor = (): void => {
+    flowResult(persistenceEditorState.persistenceMonitor()).catch(
+      applicationStore.alertUnhandledError,
+    );
+  };
+
   return (
     <div className="persistence-buttons">
       <div>
@@ -104,7 +110,7 @@ export const PersistenceEditor = observer(() => {
           className="persistence-refresh"
           tabIndex={-1}
           title="Refresh"
-          onClick={(): void => persistenceEditorState.setMonitorOutput()}
+          onClick={monitor}
         >
           <RefreshIcon style={{ color: 'white', fontSize: '1.6rem' }} />
         </button>

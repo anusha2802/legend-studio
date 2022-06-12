@@ -33,14 +33,36 @@ export class PersistenceEditorState extends ElementEditorState {
       setTriggerName: action,
       setMonitorOutput: action,
       persistenceTrigger: flow,
-
+      persistenceMonitor: flow,
     });
   }
 
   *persistenceTrigger(): GeneratorFn<void> {
     try {
-      this.helloNew = 'hello new' + Date.now();
+      this.helloNew = 'Trigger ' + Date.now();
       this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+    } catch (error) {
+      assertErrorThrown(error);
+      this.editorStore.applicationStore.log.error(
+        LogEvent.create(TRIGGER_LOG_EVENT_TYPE),
+        error,
+      );
+      this.editorStore.applicationStore.notifyError(error);
+    }
+  }
+
+  *persistenceMonitor(): GeneratorFn<void> {
+    try {
+      this.helloNew = 'Monitor ' + Date.now();
+      this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+      fetch("http://ip.jsontest.com/").then(response => {
+        if (response.ok) {
+          response.json().then(json => {
+            alert(json);
+            console.log(json);
+          });
+        }
+      });
     } catch (error) {
       assertErrorThrown(error);
       this.editorStore.applicationStore.log.error(
