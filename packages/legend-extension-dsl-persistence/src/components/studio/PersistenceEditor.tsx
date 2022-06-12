@@ -71,7 +71,7 @@ export const PersistenceEditor = observer(() => {
   );
 
   const trigger = (): void => {
-    flowResult(persistenceEditorState.trigger()).catch(
+    flowResult(persistenceEditorState.persistenceTrigger()).catch(
       applicationStore.alertUnhandledError,
     );
   };

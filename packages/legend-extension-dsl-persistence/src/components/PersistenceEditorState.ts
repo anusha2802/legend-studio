@@ -32,13 +32,15 @@ export class PersistenceEditorState extends ElementEditorState {
       helloNew: observable,
       setTriggerName: action,
       setMonitorOutput: action,
-      trigger: flow,
+      persistenceTrigger: flow,
+
     });
   }
 
-  *trigger(): GeneratorFn<void> {
+  *persistenceTrigger(): GeneratorFn<void> {
     try {
-      this.helloNew = 'hello new';
+      this.helloNew = 'hello new' + Date.now();
+      this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
     } catch (error) {
       assertErrorThrown(error);
       this.editorStore.applicationStore.log.error(
@@ -54,6 +56,18 @@ export class PersistenceEditorState extends ElementEditorState {
   }
 
   setMonitorOutput(): void {
+//	const baseUrl = `${this.baseUrl}/codeGeneration/awsPersistence/monitor/JOBNAME`;
+//	this.get(baseUrl).then((response) => alert (response));
+/*
+	fetch("http://ip.jsontest.com/").then(response => {
+	  if (response.ok) {
+		response.json().then(json => {
+		  alert(json);
+		  console.log(json);
+		});
+      }
+    });
+*/
 	// Make the monitor array be of size 10
     this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
   }

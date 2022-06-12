@@ -15,6 +15,11 @@ export class PersistenceServerClient extends AbstractServerClient {
     });
   }
 
+  // EXPERIMENTAL
+  // const result = fetch("http://ip.jsontest.com/");
+  // const engine = new V1_Engine({}, console.log);
+  // private kaka = engine.getEngineServerClient();
+
   // SERVER
 
   private _server = (): string => `${this.baseUrl}/monitor`; //replace with proper url
