@@ -129,7 +129,7 @@ export const PersistenceEditor = observer(() => {
           <tbody>
 			{persistenceEditorState?.currentMonitor?.map(item => {
 				  return (
-					<tr>
+					<tr key={ item.startedOn + item.completedOn }>
 					  <td>{ item.startedOn }</td>
 					  <td>{ item.completedOn }</td>
 					  <td>{ item.jobState }</td>

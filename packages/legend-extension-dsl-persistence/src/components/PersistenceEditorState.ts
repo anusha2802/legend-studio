@@ -40,7 +40,7 @@ export class PersistenceEditorState extends ElementEditorState {
   *persistenceTrigger(): GeneratorFn<void> {
     try {
       this.helloNew = 'Trigger ' + Date.now();
-      this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+      // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(Date().toString, i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
     } catch (error) {
       assertErrorThrown(error);
       this.editorStore.applicationStore.log.error(
@@ -51,15 +51,27 @@ export class PersistenceEditorState extends ElementEditorState {
     }
   }
 
+  /*
+  const helper = (r: any, index: number) => {
+	return new Monitor(r["StartedOn"], r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]);
+  }
+  */
+
   *persistenceMonitor(): GeneratorFn<void> {
     try {
       this.helloNew = 'Monitor ' + Date.now();
-      this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
-      fetch("http://ip.jsontest.com/").then(response => {
+      // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+
+	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/monitortest/";
+	  const jobName = "denali";
+	  const url = baseUrl + jobName;
+
+      fetch(url).then(response => {
         if (response.ok) {
           response.json().then(json => {
             alert(json);
             console.log(json);
+			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
           });
         }
       });
@@ -91,7 +103,7 @@ export class PersistenceEditorState extends ElementEditorState {
     });
 */
 	// Make the monitor array be of size 10
-    this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
+    // this.currentMonitor = Array(10).fill(0).map((_, i) => new Monitor(i.toString(), Date().toString(), 'SUCCESS', 'mangoes taste great'));
   }
 
   /*
