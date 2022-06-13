@@ -22,10 +22,12 @@ export class PersistenceEditorState extends ElementEditorState {
   helloNew?: string | undefined;
   currentMonitor?: Array<Monitor> | undefined;
   // element: PackageableElement | undefined;
+
+  // FIXME: This needs to come from engine
+  static baseUrl: string = 'http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/';
+
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
-	console.log("RAJAMONY debug");
-	console.log(element);
 
     makeObservable(this, {
       persistence: computed,
@@ -48,19 +50,15 @@ export class PersistenceEditorState extends ElementEditorState {
 	}
   }
 
-  getFQN(pe: PackageableElement): string {
-      return '';
-  }
-
   *persistenceTrigger(): GeneratorFn<void> {
     try {
 	  const pname = [ ...this.getPersistenceName(this.element.package), this.element.name].join('_');
-	  console.log(pname);
+	  console.log('Triggering : ' + pname);
 
-	  const jobName = 'denali-trigger-' + Date.now();
+	  const jobName = pname; // FIXME: This should include groupId and artifactId
 	  const postobj = { jobName: jobName };
-	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/triggertest";
-      fetch(baseUrl, {
+	  const url = PersistenceEditorState.baseUrl + 'trigger';
+      fetch(url, {
 	    method: 'POST',
 		body: JSON.stringify(postobj),
         headers: {
@@ -74,7 +72,7 @@ export class PersistenceEditorState extends ElementEditorState {
         }
       });
 
-      this.helloNew = 'Trigger ' + Date.now();
+      this.helloNew = 'Trigger ' + Date.now();		// FIXME: Remove this when debug done
 
     } catch (error) {
       assertErrorThrown(error);
@@ -89,10 +87,11 @@ export class PersistenceEditorState extends ElementEditorState {
   *persistenceMonitor(): GeneratorFn<void> {
     try {
       this.helloNew = 'Monitor ' + Date.now();		// FIXME: Remove this when done
+	  const pname = [ ...this.getPersistenceName(this.element.package), this.element.name].join('_');
+	  console.log('Monitoring : ' + pname);
 
-	  const baseUrl = "http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/monitortest/";
-	  const jobName = 'denali-monitor-' + Date.now();
-	  const url = baseUrl + jobName;
+	  const jobName = pname; // FIXME: This should include groupId and artifactId
+	  const url = PersistenceEditorState.baseUrl + 'monitor/' + jobName;
 
       fetch(url).then(response => {
         if (response.ok) {
