@@ -19,12 +19,13 @@ import type { PersistenceStore } from './studio/PersistenceStore';
 const TRIGGER_LOG_EVENT_TYPE = 'TRIGGER_FAILURE';
 
 export class PersistenceEditorState extends ElementEditorState {
-  helloNew?: string | undefined;
+  triggerDetails?: string | undefined;
   currentMonitor?: Array<Monitor> | undefined;
   // element: PackageableElement | undefined;
 
   // FIXME: This needs to come from engine
-  static baseUrl: string = 'http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/';
+  static baseUrl =
+    'http://localhost:6060/api/pure/v1/codeGeneration/awsPersistence/';
 
   constructor(editorStore: EditorStore, element: PackageableElement) {
     super(editorStore, element);
@@ -33,47 +34,71 @@ export class PersistenceEditorState extends ElementEditorState {
       persistence: computed,
       //persistenceStore: false,
       reprocess: action,
-      helloNew: observable,
-	  currentMonitor: observable,
+      triggerDetails: observable,
+      currentMonitor: observable,
       setTriggerName: action,
       persistenceTrigger: flow,
       persistenceMonitor: flow,
+      getPersistenceName: action,
     });
   }
 
   getPersistenceName(p: Package | undefined): Array<string> {
     if (p === undefined) {
-	    return [] as string[];
-	}
-	else {
-	    return (p!.name == 'ROOT') ? [] as string[] : [ ...this.getPersistenceName(p!.package), p!.name];
-	}
+      return [] as string[];
+    } else {
+      return p!.name === 'ROOT'
+        ? ([] as string[])
+        : [...this.getPersistenceName(p!.package), p!.name];
+    }
   }
 
   *persistenceTrigger(): GeneratorFn<void> {
     try {
-	  const pname = [ ...this.getPersistenceName(this.element.package), this.element.name].join('_');
-	  console.log('Triggering : ' + pname);
+      const pname = [
+        ...this.getPersistenceName(this.element.package),
+        this.element.name,
+      ].join('_');
+      console.log(`Triggering : ${pname}`);
 
-	  const jobName = pname; // FIXME: This should include groupId and artifactId
-	  const postobj = { jobName: jobName };
-	  const url = PersistenceEditorState.baseUrl + 'trigger';
+      const jobName = pname; // FIXME: This should include groupId and artifactId
+      const postobj = { jobName: jobName };
+      const url = `${PersistenceEditorState.baseUrl}trigger`;
       fetch(url, {
-	    method: 'POST',
-		body: JSON.stringify(postobj),
+        method: 'POST',
+        body: JSON.stringify(postobj),
         headers: {
-          'Content-Type': 'application/json'
-	    }
-	  }).then(response => {
+          'Content-Type': 'application/json',
+        },
+      }).then((response) => {
         if (response.ok) {
-          response.json().then(json => {
-			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
+          response.json().then((json) => {
+            this.currentMonitor = json.map(
+              (r: any, index: number) =>
+                new Monitor(
+                  r.StartedOn,
+                  r.CompletedOn,
+                  r.JobRunState,
+                  r.ErrorMessage,
+                ),
+            );
           });
         }
       });
 
-      this.helloNew = 'Trigger ' + Date.now();		// FIXME: Remove this when debug done
-
+      const date = new Date();
+      this.triggerDetails = `Pipeline triggered on ${date.toLocaleString(
+        'en-US',
+        {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        },
+      )}`; // FIXME: Remove this when debug done
     } catch (error) {
       assertErrorThrown(error);
       this.editorStore.applicationStore.log.error(
@@ -86,17 +111,40 @@ export class PersistenceEditorState extends ElementEditorState {
 
   *persistenceMonitor(): GeneratorFn<void> {
     try {
-      this.helloNew = 'Monitor ' + Date.now();		// FIXME: Remove this when done
-	  const pname = [ ...this.getPersistenceName(this.element.package), this.element.name].join('_');
-	  console.log('Monitoring : ' + pname);
+      const date = new Date();
+      this.triggerDetails = `Pipelines refreshed on ${date.toLocaleString(
+        'en-US',
+        {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        },
+      )}`; // FIXME: Remove this when done
+      const pname = [
+        ...this.getPersistenceName(this.element.package),
+        this.element.name,
+      ].join('_');
+      console.log(`Monitoring : ${pname}`);
 
-	  const jobName = pname; // FIXME: This should include groupId and artifactId
-	  const url = PersistenceEditorState.baseUrl + 'monitor/' + jobName;
+      const jobName = pname; // FIXME: This should include groupId and artifactId
+      const url = `${PersistenceEditorState.baseUrl}monitor/${jobName}`;
 
-      fetch(url).then(response => {
+      fetch(url).then((response) => {
         if (response.ok) {
-          response.json().then(json => {
-			this.currentMonitor = json.map((r: any, index: number) => new Monitor(r["StartedOn"], r["CompletedOn"], r["JobRunState"], r["ErrorMessage"]));
+          response.json().then((json) => {
+            this.currentMonitor = json.map(
+              (r: any, index: number) =>
+                new Monitor(
+                  r.StartedOn,
+                  r.CompletedOn,
+                  r.JobRunState,
+                  r.ErrorMessage,
+                ),
+            );
           });
         }
       });
@@ -110,8 +158,8 @@ export class PersistenceEditorState extends ElementEditorState {
     }
   }
 
-  setTriggerName(helloNew: string | undefined): void {
-    this.helloNew = helloNew;
+  setTriggerName(triggerDetails: string | undefined): void {
+    this.triggerDetails = triggerDetails;
   }
 
   get persistence(): Persistence {

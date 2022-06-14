@@ -84,8 +84,8 @@ export const PersistenceEditor = observer(() => {
 
   return (
     <div className="persistence-buttons">
-      <div>
-        Trigger Pipeline &nbsp;
+      <div style={{ color: 'white', marginLeft: '1cm' }}>
+        <br /> Trigger Pipeline &emsp;
         <button
           type="button"
           className="persistence-trigger"
@@ -93,32 +93,35 @@ export const PersistenceEditor = observer(() => {
           onClick={trigger}
           title="Trigger"
         >
-          <PlayIcon style={{ color: 'white', fontSize: '1.6rem' }} />
+          <PlayIcon style={{ color: 'white', fontSize: '1.1rem' }} />
         </button>
+        &emsp;{' '}
         <StringEditor
           isReadOnly={true}
           propertyName={''}
-          value={persistenceEditorState.helloNew}
-          update={(value: string | undefined): void => persistenceEditorState.setTriggerName(value)}
+          value={persistenceEditorState.triggerDetails}
+          update={(value: string | undefined): void =>
+            persistenceEditorState.setTriggerName(value)
+          }
         />
       </div>
       <br />
       <br />
-      <div>
-        Refresh Pipelines &nbsp;
+      <div style={{ color: 'white', marginLeft: '1cm' }}>
+        Refresh Pipelines &emsp;
         <button
           className="persistence-refresh"
-          tabIndex={-1}
+          tabIndex={1}
           title="Refresh"
           onClick={monitor}
         >
           <RefreshIcon style={{ color: 'white', fontSize: '1.6rem' }} />
         </button>
       </div>
-      <br />
       <div className="persistence-table">
-        <table className="table">
-          <thead>
+        &emsp;{' '}
+        <table className="table" style={{ marginLeft: '1cm' }}>
+          <thead style={{ color: 'white' }}>
             <tr>
               <th>Started On</th>
               <th>Completed On</th>
@@ -127,16 +130,14 @@ export const PersistenceEditor = observer(() => {
             </tr>
           </thead>
           <tbody>
-			{persistenceEditorState?.currentMonitor?.map(item => {
-				  return (
-					<tr key={ item.startedOn + item.completedOn }>
-					  <td>{ item.startedOn }</td>
-					  <td>{ item.completedOn }</td>
-					  <td>{ item.jobState }</td>
-					  <td>{ item.exception }</td>
-					</tr>
-				  );
-				})}
+            {persistenceEditorState?.currentMonitor?.map((item) => (
+              <tr key={item.startedOn + item.completedOn}>
+                <td>{item.startedOn}</td>
+                <td>{item.completedOn}</td>
+                <td>{item.jobState}</td>
+                <td>{item.exception}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
