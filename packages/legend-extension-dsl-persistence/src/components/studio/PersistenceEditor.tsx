@@ -132,8 +132,8 @@ export const PersistenceEditor = observer(() => {
           <tbody>
             {persistenceEditorState?.currentMonitor?.map((item) => (
               <tr key={item.startedOn + item.completedOn}>
-                <td>{item.startedOn}</td>
-                <td>{item.completedOn}</td>
+                <td>{item.startedOn == "" ? "" : new Date(Date.parse(item.startedOn)).toLocaleString()}</td>
+                <td>{item.completedOn == "" ? "" : new Date(Date.parse(item.completedOn)).toLocaleString()}</td>
                 <td>{item.jobState}</td>
                 <td>{item.exception}</td>
               </tr>
