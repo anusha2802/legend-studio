@@ -146,7 +146,7 @@ export class V1_AwsPkAuthenticationStrategy
 
   get hashCode(): string {
     return hashArray([
-      CORE_HASH_STRUCTURE.AWS_OAUTH_AUTHENTICATION_STRATEGY,
+      CORE_HASH_STRUCTURE.AWS_PK_AUTHENTICATION_STRATEGY,
       this.secretArn,
       this.user,
     ]);
