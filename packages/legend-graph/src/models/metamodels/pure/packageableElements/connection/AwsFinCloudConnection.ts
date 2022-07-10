@@ -43,8 +43,8 @@ export class AwsFinCloudConnection extends Connection {
     return hashArray([
       CORE_HASH_STRUCTURE.AWS_FIN_CLOUD_CONNECTION,
       this.store.hashValue,
-      this.datasetId,
       this.authenticationStrategy,
+      this.datasetId,
       this.apiUrl,
       this.queryInfo,
     ]);
