@@ -35,6 +35,7 @@ export class V1_AwsFinCloudConnection
   get hashCode(): string {
     return hashArray([
       CORE_HASH_STRUCTURE.AWS_FIN_CLOUD_CONNECTION,
+      this.store ?? '',
       this.authenticationStrategy,
       this.datasetId,
       this.apiUrl,
